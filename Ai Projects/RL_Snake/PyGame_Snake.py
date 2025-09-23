@@ -9,6 +9,7 @@ pg.init()
 GREEN = (173, 204, 96)
 DARK_GREEN = (43, 51, 24)
 
+#//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 class Food:
     def __init__(self, snake_body):
         # self.position = Vector2(5,6) # Vector2 class of Pygame is usefull in this case. 6th column, 7th row.
@@ -35,6 +36,8 @@ class Food:
             position = self.generate_random_cell()
         return position
 
+
+#//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 class Snake:
     def __init__(self):
         #? snake body = [ head, [tail] ]
@@ -57,6 +60,7 @@ class Snake:
     def reset(self):
         self.body = [Vector2(6,9), Vector2(5,9), Vector2(4,9)]
 
+#/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 class Game:
     def __init__(self):
         self.snake = Snake()
@@ -96,7 +100,8 @@ class Game:
         self.food.generate_random_pos(self.snake.body)
         self.state = "STOPPED"
 
-#* Canvas
+
+#%% Canvas
 cell_size = 30
 number_of_cells = 25
 OFFSET = 75
