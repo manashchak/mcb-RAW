@@ -6,6 +6,8 @@ import random
 
 #%% Init
 pg.init()
+title_font = pg.font.Font(None, 60) # (type of Font(None is default), font_size)
+score_font = pg.font.Font(None, 40) # Font object for Scoring
 GREEN = (173, 204, 96)
 DARK_GREEN = (43, 51, 24)
 
@@ -17,10 +19,10 @@ class Food:
 
     def draw(self):
         #? Displace Surface: all the game objects are here. One per game
-        #? Regular Surface: here we can draw here. as many Reg. surface as needed.
-        #? Rect: used for positioning and collision detection, and for drawing. This is contain the food.
-        food_rect = pg.Rect(self.position.x*cell_size, self.position.y*cell_size , cell_size, cell_size) # pg.Rect(x, y , w, h). x-> turn into pix, y-> turn into pix.
-        # pg.draw.rect(screen, DARK_GREEN, food_rect ) # (surface, color, rect object)
+        #? Regular Surface: here we can draw. as many Regular surface as needed.
+        #? Rect: used for positioning and collision detection, and for drawing. This will contain the food.
+        food_rect = pg.Rect(OFFSET+self.position.x*cell_size, OFFSET+self.position.y*cell_size , cell_size, cell_size) # pg.Rect(x, y , w, h). x-> turn into pix, y-> turn into pix.
+        #* give food_rect a texture
         screen.blit(food_texture, food_rect.topleft) # (surface, rect object)
     
     def generate_random_cell(self):
@@ -42,15 +44,18 @@ class Snake:
     def __init__(self):
         #? snake body = [ head, [tail] ]
         self.body = [Vector2(6,9), Vector2(5,9), Vector2(4,9)]
-        self.direction = Vector2(1,0) # to move to the right
+        self.direction = Vector2(1,0) # to move to the right (starting dir ? )
         self.add_segment = False
+        self.eat_sound = pg.mixer.Sound("Ai Projects/RL_Snake/Assets/eating_food.wav")
+        self.hit_sound = pg.mixer.Sound("Ai Projects/RL_Snake/Assets/wall.wav")
 
     def draw(self):
         for segment in self.body:
-            segment_rect = (segment.x*cell_size, segment.y*cell_size, cell_size, cell_size)
+            segment_rect = (OFFSET+segment.x*cell_size, OFFSET+segment.y*cell_size, cell_size, cell_size)
             pg.draw.rect(screen, DARK_GREEN, segment_rect, 0, 7) # (surface, color, rect object, <filled with color>, <border>)
     
     def update(self):
+        #? This method keeps the snake moving (add ahead, delete from behind)
         self.body.insert(0, self.body[0]+self.direction) # increase the snake body in it's head direction. at 0th index add direction to the head. 
         if self.add_segment == True:
             self.add_segment = False
@@ -66,6 +71,7 @@ class Game:
         self.snake = Snake()
         self.food  = Food(self.snake.body)
         self.state = "RUNNING"
+        self.score = 0
 
     def draw(self):
         self.food.draw()
@@ -73,7 +79,7 @@ class Game:
 
     def update(self):
         if self.state == "RUNNING":
-            self.snake.update()
+            self.snake.update() # keep the snake moving
             self.check_collision_with_food()
             self.check_collision_with_edges()
             self.check_collision_with_tail()
@@ -82,6 +88,8 @@ class Game:
         if self.snake.body[0] == self.food.position:
             self.food.position = self.food.generate_random_pos(self.snake.body)
             self.snake.add_segment = True
+            self.score += 1
+            self.snake.eat_sound.play()
     
     def check_collision_with_edges(self):
         if self.snake.body[0].x == number_of_cells or self.snake.body[0].x == -1: # snake passed the right edge or left edge
@@ -99,6 +107,8 @@ class Game:
         self.snake.reset()
         self.food.generate_random_pos(self.snake.body)
         self.state = "STOPPED"
+        self.score = 0
+        self.snake.hit_sound.play()
 
 
 #%% Canvas
@@ -152,8 +162,13 @@ while True:
 
     # Drawing
     screen.fill(GREEN)  # Fill the display surface.
-    pg.draw.rect(screen, DARK_GREEN, (OFFSET-5, OFFSET-5, cell_size*number_of_cells+10, cell_size*number_of_cells+10), 5) # (surface, color, rect, border_size)
+    border_width = 10
+    pg.draw.rect(screen, DARK_GREEN, (OFFSET-border_width, OFFSET-border_width, cell_size*number_of_cells+10, cell_size*number_of_cells+10), border_width) # (surface, color, rect, border_size)
     game.draw()
+    title_surface = title_font.render("Retro Snake", True, DARK_GREEN) # (title, Anti-aliesing, Color)
+    score_surface = score_font.render(str(game.score), True, DARK_GREEN)
+    screen.blit(title_surface, (OFFSET-5, 20)) # blit: [Block Image Transfer] (surface, start location)
+    screen.blit(score_surface, (OFFSET-5, OFFSET+cell_size*number_of_cells + 10))
 
     pg.display.update() # takes all the changes and draws updates
     clock.tick(60) # FPS. everything insider while loop will run 60 times every second.
