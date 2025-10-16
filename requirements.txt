@@ -1,5 +1,7 @@
 gymnasium
+"gymnasium[classic-control]"
 numpy
 matplotlib
 pickle-mixin
+pygame
 tqdm
