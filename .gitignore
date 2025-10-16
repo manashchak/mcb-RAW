@@ -1,0 +1,35 @@
+# Byte-compiled / optimized / compiled files
+__pycache__/
+*.pyc
+*.pyd
+*.pyo
+*.egg-info/
+.eggs/
+
+# Distribution / packaging
+dist/
+build/
+*.whl
+
+# Virtual environment
+**venv/
+**/.venv/
+**/env/
+**/venv_*/
+
+
+# Editor/IDE specific files
+.idea/             # IntelliJ IDEA / PyCharm
+.vscode/           # Visual Studio Code
+.mypy_cache/       # MyPy cache
+.pytest_cache/     # Pytest cache
+
+# Temporary files
+*.tmp
+*.log
+*.swp
+*.swo
+
+# OS generated files
+.DS_Store          # macOS
+Thumbs.db          # Windows
