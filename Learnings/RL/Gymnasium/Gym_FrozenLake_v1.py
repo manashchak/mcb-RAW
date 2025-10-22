@@ -4,6 +4,7 @@ import numpy as np
 import matplotlib.pylab as plt
 import pickle
 from tqdm import tqdm
+import os
 
 #%% Defs:
 def run(episodes, is_training=True, render=False):
@@ -15,16 +16,18 @@ def run(episodes, is_training=True, render=False):
     if is_training:
         q = np.zeros((env.observation_space.n, env.action_space.n)) #* init a 64x4 array.
     else:
-        f = open("Learnings/RL/Gymnasium/frozen_lake_8x8.pkl", "rb")
+        f = open("Learnings/RL/Gymnasium/frozen_lake_8x8_success_v1.pkl", "rb")
         q = pickle.load(f)
         f.close()
 
     #* Init Q parameters (hyperparameters)
-    learning_rate_a = 0.9   #* alpha or learning rate
-    discount_factor_g = 0.9 #* gamma or discount rate
+    #!...change...
+    learning_rate_a = 0.9   #* alpha or learning rate. [alpha=0]~agent learns the slowest.
+    discount_factor_g = 0.99 #* gamma or discount rate. [gamma=0]~the agent is short-sighted.
 
     #* Init params for Epsilon-Greedy Policy Algorithm
     epsilon = 1                   #* 1 -> 100% random actions. at the begining.
+    #!...change...
     epsilon_decay_rate = 0.0001   #* over time epsilon will start to decay from 1 to become less and less random
                                     #? number of episodes = 1/epsilon_decay_rate = 1/0.0001 = 10000 times.
     rng = np.random.default_rng() #* random number generator
@@ -57,7 +60,8 @@ def run(episodes, is_training=True, render=False):
         #* After each episode, decrease epsilon (Epsilon-Greedy Approach)
         epsilon = max(epsilon - epsilon_decay_rate, 0) #* used max(), because don't let it become -ve! 
         if epsilon == 0:
-            learning_rate_a = 0.0001 #* help to stabilize the q values after we no longer 'exploring'
+            #!...change...
+            learning_rate_a = 0.0001 #* help to stabilize the q values after we no longer 'exploring'.
         
         #* Tracking
         if reward == 1:
@@ -74,13 +78,13 @@ def run(episodes, is_training=True, render=False):
     plt.xlabel("Number of Episodes")
     plt.ylabel("Number of Rewards/100 Episodes")
     if is_training:
-        plt.savefig('Learnings/RL/Gymnasium/frozen_lake_8x8_training.png')
+        plt.savefig('C:/MCB Local/Manash-Git/mcb-RAW/Learnings/RL/Gymnasium/frozen_lake_8x8_training.png')
     else:
-        plt.savefig('Learnings/RL/Gymnasium/frozen_lake_8x8_eval.png')
+        plt.savefig('C:/MCB Local/Manash-Git/mcb-RAW/Learnings/RL/Gymnasium/frozen_lake_8x8_eval.png')
 
     #* Save Q table to a file (if is_training)
     if is_training:
-        f = open("Learnings/RL/Gymnasium/frozen_lake_8x8.pkl", "wb")
+        f = open("C:/MCB Local/Manash-Git/mcb-RAW/Learnings/RL/Gymnasium/frozen_lake_8x8.pkl", "wb")
         pickle.dump(q, f)
         f.close()
 
@@ -97,3 +101,5 @@ if __name__ == '__main__':
 
 
 
+
+# %%
