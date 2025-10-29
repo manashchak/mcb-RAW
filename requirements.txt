@@ -6,3 +6,4 @@ pickle-mixin
 pygame
 tqdm
 faster-whisper
+hf_xet
